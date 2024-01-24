@@ -50,7 +50,7 @@ func checkErr(err error, w http.ResponseWriter) (f bool) {
 	return
 }
 
-func (i *IFace) getBooks(w http.ResponseWriter, r *http.Request) {
+func (i *IFace) GetBooks(w http.ResponseWriter, r *http.Request) {
 	stmt := `SELECT * FROM books;`
 	var books []Book
 
@@ -76,7 +76,7 @@ func (i *IFace) getBooks(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func (i *IFace) postBook(w http.ResponseWriter, r *http.Request) {
+func (i *IFace) PostBook(w http.ResponseWriter, r *http.Request) {
 	var book Book
 
 	err := json.NewDecoder(r.Body).Decode(&book)
@@ -109,7 +109,7 @@ func (i *IFace) postBook(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (i *IFace) getBook(w http.ResponseWriter, r *http.Request) {
+func (i *IFace) GetBook(w http.ResponseWriter, r *http.Request) {
 	var book Book
 
 	id, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/api/books/"))
@@ -136,7 +136,7 @@ func (i *IFace) getBook(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func (i *IFace) putBook(w http.ResponseWriter, r *http.Request) {
+func (i *IFace) PutBook(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/api/books/"))
 	if checkErr(err, w) {
 		return
@@ -176,7 +176,7 @@ func (i *IFace) putBook(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Successfully updated book with id of " + strconv.Itoa(id)))
 }
 
-func (i *IFace) delBook(w http.ResponseWriter, r *http.Request) {
+func (i *IFace) DelBook(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/api/books/"))
 	if checkErr(err, w) {
 		return
@@ -193,30 +193,4 @@ func (i *IFace) delBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
-}
-
-func (i *IFace) HandleBooks(w http.ResponseWriter, r *http.Request) {
-	id := strings.TrimPrefix(r.URL.Path, "/api/books/")
-
-	if id != "" {
-		switch r.Method {
-		case http.MethodGet:
-			i.getBook(w, r)
-		case http.MethodPut:
-			i.putBook(w, r)
-		case http.MethodDelete:
-			i.delBook(w, r)
-		default:
-			http.Error(w, errors.New("Unkown Method").Error(), http.StatusBadRequest)
-		}
-	} else {
-		switch r.Method {
-		case http.MethodGet:
-			i.getBooks(w, r)
-		case http.MethodPost:
-			i.postBook(w, r)
-		default:
-			http.Error(w, errors.New("Unkown Method").Error(), http.StatusBadRequest)
-		}
-	}
 }
