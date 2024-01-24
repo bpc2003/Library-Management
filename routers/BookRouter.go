@@ -13,26 +13,26 @@ type BookRouter struct {
 }
 
 func (router *BookRouter) HandleBooks(w http.ResponseWriter, r *http.Request) {
-	i := &controllers.IFace{DB: router.DB}
+	controller := &controllers.IFace{DB: router.DB}
 	id := strings.TrimPrefix(r.URL.Path, "/api/books/")
 
 	if id != "" {
 		switch r.Method {
 		case http.MethodGet:
-			i.GetBook(w, r)
+			controller.GetBook(w, r)
 		case http.MethodPut:
-			i.PutBook(w, r)
+			controller.PutBook(w, r)
 		case http.MethodDelete:
-			i.DelBook(w, r)
+			controller.DelBook(w, r)
 		default:
 			http.Error(w, errors.New("Invalid Method").Error(), http.StatusBadRequest)
 		}
 	} else {
 		switch r.Method {
 		case http.MethodGet:
-			i.GetBooks(w, r)
+			controller.GetBooks(w, r)
 		case http.MethodPost:
-			i.PostBook(w, r)
+			controller.PostBook(w, r)
 		default:
 			http.Error(w, errors.New("Invalid Method").Error(), http.StatusBadRequest)
 		}
