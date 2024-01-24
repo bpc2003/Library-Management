@@ -2,6 +2,7 @@ package routers
 
 import (
 	"backend/controllers"
+	"backend/middleware"
 	"database/sql"
 	"errors"
 	"net/http"
@@ -21,9 +22,9 @@ func (router *BookRouter) HandleBooks(w http.ResponseWriter, r *http.Request) {
 		case http.MethodGet:
 			controller.GetBook(w, r)
 		case http.MethodPut:
-			controller.PutBook(w, r)
+			middleware.Auth(controller.PutBook).ServeHTTP(w, r)
 		case http.MethodDelete:
-			controller.DelBook(w, r)
+			middleware.Auth(controller.DelBook).ServeHTTP(w, r)
 		default:
 			http.Error(w, errors.New("Invalid Method").Error(), http.StatusBadRequest)
 		}
@@ -32,7 +33,7 @@ func (router *BookRouter) HandleBooks(w http.ResponseWriter, r *http.Request) {
 		case http.MethodGet:
 			controller.GetBooks(w, r)
 		case http.MethodPost:
-			controller.PostBook(w, r)
+			middleware.Auth(controller.PostBook).ServeHTTP(w, r)
 		default:
 			http.Error(w, errors.New("Invalid Method").Error(), http.StatusBadRequest)
 		}
